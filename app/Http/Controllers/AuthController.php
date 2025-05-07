@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -15,7 +16,7 @@ class AuthController extends Controller
     {
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255',  // Changed from 'name' to 'username'
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
@@ -24,11 +25,12 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        // Buat user baru
+        // Buat user baru - changed field names to match your database
         $user = User::create([
-            'name' => $request->name,
+            'username' => $request->username,  // Changed from 'name' to 'username'
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'penerima',  // Default role from your table
         ]);
 
         // Login otomatis setelah registrasi
@@ -40,20 +42,48 @@ class AuthController extends Controller
     // Method untuk login
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            return response()->json(['message' => 'Successfully logged in!', 'user' => $user], 200);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+    
+        \Log::info('Login attempt', ['email' => $request->email]);
+        
+        // Cek apakah user dengan email tersebut ada
+        $user = User::where('email', $request->email)->first();  // Simplified - use imported class
+        
+        if (!$user) {
+            \Log::warning('User tidak ditemukan', ['email' => $request->email]);
+            return back()
+                ->withErrors(['email' => 'Email tidak ditemukan.'])
+                ->withInput($request->except('password'));
         }
-
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        
+        \Log::info('User ditemukan', ['user_id' => $user->user_id, 'role' => $user->role]);
+        
+        // Tambahkan debug untuk password verification
+        $password_check = Hash::check($request->password, $user->password);
+        \Log::info('Password check', ['result' => $password_check ? 'match' : 'no match']);
+        
+        // Coba login - ensure fields match your database
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $request->session()->regenerate();
+            \Log::info('Login berhasil', ['user_id' => Auth::id(), 'email' => $request->email]);
+            return redirect()->intended('/dashboard');
+        }
+    
+        \Log::warning('Login gagal', ['email' => $request->email]);
+        return back()
+            ->withErrors(['password' => 'Password yang Anda masukkan salah.'])
+            ->withInput($request->except('password'));
     }
-
+    
     // Method untuk logout
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return response()->json(['message' => 'Successfully logged out'], 200);
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login');
     }
 }

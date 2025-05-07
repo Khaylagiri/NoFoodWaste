@@ -19,18 +19,33 @@ use App\Http\Controllers\DonationController;
 
 @include_once('admin_web.php');
 
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-})->name('/');
+// Route untuk guest (belum login)
+Route::middleware('guest')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/donate', [DonationController::class, 'index'])->name('donate');
-Route::get('/find-donations', [DonationController::class, 'findDonations'])->name('find-donations');
+    Route::get('login', function() {
+        return view('login');
+    })->name('login');
+
+    Route::post('login', [AuthController::class, 'login'])->name('login.post');
+});
+
+// Route untuk user yang sudah login
+Route::middleware('auth')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    
+    // Dashboard route
+    Route::get('/dashboard', function() {
+        return view('dashboard.index');
+    })->name('dashboard');
+
+    // Donation routes
+    Route::get('/donate', [DonationController::class, 'index'])->name('donate');
+    Route::get('/find-donations', [DonationController::class, 'findDonations'])->name('find-donations');
+});
 
 Route::prefix('starter-kit')->group(function () {
     Route::view('index', 'admin.color-version.index')->name('index');
 });
-
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
