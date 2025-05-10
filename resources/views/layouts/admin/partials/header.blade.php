@@ -1,0 +1,69 @@
+<div class="page-main-header" style="background-color: #2C6B2F;">
+  <div class="main-header-right row m-0">
+    <div class="main-header-left">
+      <div class="logo-wrapper"><a href="{{ route('dashboard') }}"><img class="img-fluid" src="{{asset('assets/images/logo.png')}}" alt="" style="height:50px;"></a></div>
+      <div class="dark-logo-wrapper"><a href="{{ route('dashboard') }}"><img class="img-fluid" src="{{asset('assets/images/logo.png')}}" alt="" style="height:50px;"></a></div>
+      <div class="toggle-sidebar"><i class="status_toggle middle" data-feather="align-center" id="sidebar-toggle" style="color: #FAF3E0;"></i></div> 
+    </div>
+    <div class="left-menu-header col">
+      <ul>
+        <li>
+          <h5 style="color: #FFFFFF;">No Food Waste</h5>
+        </li>
+      </ul>
+    </div>
+    <div class="nav-right col pull-right right-menu p-0">
+      <ul class="nav-menus">
+        <li><a class="text-white" href="#!" onclick="javascript:toggleFullScreen()" style="color: #FAF3E0; font-size: 20px;"><i data-feather="maximize" style="color: #FAF3E0;"></i></a></li> 
+        <li>
+          <div class="mode"><i class="fa fa-moon-o" style="color: #FAF3E0;"></i></div> 
+        </li>
+        <li class="onhover-dropdown">
+          <div class="notification-box"><i data-feather="bell" style="color: #FAF3E0;"></i><span class="dot-animated" style="background-color: #FAF3E0;"></span></div>
+          <ul class="notification-dropdown onhover-show-div">
+            <li>
+              <p class="f-w-700 mb-0">You have 3 Notifications<span class="pull-right badge badge-primary badge-pill">4</span></p>
+            </li>
+            <li class="noti-primary">
+              <div class="media">
+                <span class="notification-bg bg-light-primary"><i data-feather="activity" style="color: #FAF3E0;"> </i></span>
+                <div class="media-body">
+                  <p>Delivery processing </p>
+                  <span>10 minutes ago</span>
+                </div>
+              </div>
+            </li>
+            <li class="noti-secondary">
+              <div class="media">
+                <span class="notification-bg bg-light-secondary"><i data-feather="check-circle" style="color: #FAF3E0;"> </i></span>
+                <div class="media-body">
+                  <p>Order Complete</p>
+                  <span>1 hour ago</span>
+                </div>
+              </div>
+            </li>
+            <li class="noti-success">
+              <div class="media">
+                <span class="notification-bg bg-light-success"><i data-feather="file-text" style="color: #FAF3E0;"> </i></span>
+                <div class="media-body">
+                  <p>Tickets Generated</p>
+                  <span>3 hour ago</span>
+                </div>
+              </div>
+            </li>
+            <li class="noti-danger">
+              <div class="media">
+                <span class="notification-bg bg-light-danger"><i data-feather="user-check" style="color: #FAF3E0;"> </i></span>
+                <div class="media-body">
+                  <p>Delivery Complete</p>
+                  <span>6 hour ago</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="d-lg-none mobile-toggle pull-right w-auto"><i data-feather="more-horizontal" style="color: #FAF3E0;"></i></div> <!-- Ganti warna mobile toggle -->
+  </div>
+</div>
